@@ -13,3 +13,4 @@ This is a React-Native app that uses OMDB API (https://www.omdbapi.com/)
 * Fix the visual difference when show names are longer.
 * Hide favorites/seen icons from the favorites home page.
 * Separate home and result pages probably.
+* Ability to remove an item from favorites.
