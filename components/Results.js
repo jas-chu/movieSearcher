@@ -63,7 +63,7 @@ export default function Result({data, loading}) {
           <Text style={styles.title}>{item.Title}</Text>
           <TouchableOpacity onPress={() => addToFavorites(item)}>
             <Image
-              style={[styles.icon, favorites.indexOf(item.imdbID) !== -1? styles.favorite: null]}
+              style={[styles.icon, favorites.map(i => i.imdbID).indexOf(item.imdbID) !== -1? styles.favorite: null]}
               source={require('../assets/img/fav.png')}
             />
           </TouchableOpacity>
