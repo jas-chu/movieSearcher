@@ -13,6 +13,7 @@ export default function Result({data, loading}) {
 
   useEffect(() => {
     setSelectedItem(-1)
+    if ((!data || data.length === 0) && favorites.length !== 0) loadFavorites(favorites)
   }, [data]);
 
   const getInfo = (id) => {

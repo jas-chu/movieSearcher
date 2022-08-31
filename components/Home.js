@@ -17,6 +17,10 @@ export default function Home() {
     })
   }
 
+  const backHome = () => {
+    setData([])
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Search for movies and shows</Text>
@@ -31,6 +35,12 @@ export default function Home() {
           <Image
             style={styles.img}
             source={require('../assets/img/search.png')}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={backHome}>
+          <Image
+            style={styles.img}
+            source={require('../assets/img/home.png')}
           />
         </TouchableOpacity>
       </View>
