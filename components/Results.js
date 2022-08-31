@@ -37,7 +37,7 @@ export default function Result({data, loading}) {
     AsyncStorage.getItem('favorites').then((value) => {
       if (value) {
         setFavorites(JSON.parse(value))
-        // loadFavorites(JSON.parse(value))
+        if (!data || data.length === 0) loadFavorites(JSON.parse(value))
       }
     })
   }, []);
@@ -95,7 +95,7 @@ export default function Result({data, loading}) {
     <View style={styles.container}>
       <FlatList
         disableVirtualization
-        data={resultData.filter(item => !seen.includes(item.imdbID))}
+        data={resultData && resultData.filter(item => !seen.includes(item.imdbID))}
         renderItem={_renderItem}
         keyExtractor={(_, index) => index.toString()}
         initialNumToRender={3}
