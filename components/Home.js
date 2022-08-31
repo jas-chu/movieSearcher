@@ -34,7 +34,7 @@ export default function Home() {
           />
         </TouchableOpacity>
       </View>
-      <Result data={data} loading={loading}/>
+      {!loading && <Result data={data} loading={loading}/>}
     </View>
   );
 }

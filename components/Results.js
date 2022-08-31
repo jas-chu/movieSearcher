@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getMovieById } from '../utils/request';
 
 export default function Result({data, loading}) {
   const [selectedItem, setSelectedItem] = useState(-1)
   const [itemData, setItemData] = useState({})
   const [loadingInfo, setLoadingInfo] = useState(false)
+  const [seen, setSeen] = useState([])
+  const [favorites, setFavorites] = useState([])
+  const [resultData, setResultData] = useState(data)
 
   useEffect(() => {
     setSelectedItem(-1)
-  }, [data]); 
+  }, [data]);
 
   const getInfo = (id) => {
     setLoadingInfo(true)
@@ -19,18 +23,50 @@ export default function Result({data, loading}) {
     })
   }
 
+  const loadFavorites = (favorites) => {
+    setResultData(favorites)
+
+  }
+
+  useEffect(() => {
+    AsyncStorage.getItem('seen').then((value) => {
+      if (value) {
+        setSeen(JSON.parse(value))
+      }
+    })
+    AsyncStorage.getItem('favorites').then((value) => {
+      if (value) {
+        setFavorites(JSON.parse(value))
+        // loadFavorites(JSON.parse(value))
+      }
+    })
+  }, []);
+
+  const addToFavorites = (item) => {
+    favorites.push(item)
+    setFavorites(favorites)
+    AsyncStorage.setItem("favorites", JSON.stringify(favorites))
+  }
+
+  const addToSeen = (item) => {
+    seen.push(item.imdbID)
+    setSeen(seen)
+    setResultData(resultData.filter(item => !seen.includes(item.imdbID)))
+    AsyncStorage.setItem("seen", JSON.stringify(seen))
+  }
+
   const _renderItem = ({ item, index }) => (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => {setSelectedItem(index); getInfo(item.imdbID)}}>
         <View style={styles.options}>
           <Text style={styles.title}>{item.Title}</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => addToFavorites(item)}>
             <Image
-              style={styles.icon}
+              style={[styles.icon, favorites.indexOf(item.imdbID) !== -1? styles.favorite: null]}
               source={require('../assets/img/fav.png')}
             />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => addToSeen(item)}>
             <Image
               style={styles.icon}
               source={require('../assets/img/seen.png')}
@@ -59,7 +95,7 @@ export default function Result({data, loading}) {
     <View style={styles.container}>
       <FlatList
         disableVirtualization
-        data={data}
+        data={resultData.filter(item => !seen.includes(item.imdbID))}
         renderItem={_renderItem}
         keyExtractor={(_, index) => index.toString()}
         initialNumToRender={3}
@@ -100,7 +136,11 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     alignSelf: 'flex-end',
-    marginLeft: 10
+    marginLeft: 10,
+    tintColor: '#aaaaaa'
+  },
+  favorite: {
+    tintColor: 'orange'
   },
   options: {
     flexDirection: 'row',
